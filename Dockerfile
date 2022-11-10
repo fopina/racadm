@@ -1,8 +1,10 @@
-FROM centos:centos8
-RUN dnf -q -y --nodocs --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos >/dev/null 2>&1\
- && yum -y -q install wget openssl-devel >/dev/null 2>&1\
- && wget -q -O - https://linux.dell.com/repo/hardware/dsu/bootstrap.cgi | bash >/dev/null 2>&1\
- && yum install -y -q srvadmin-idrac.x86_64 >/dev/null 2>&1 \
- && rm -rf /tmp/* \
- && yum -y -q clean all >/dev/null 2>&1
+FROM fedora:38
+
+RUN curl -O https://linux.dell.com/repo/hardware/latest/os_dependent/RHEL8_64/srvadmin/srvadmin-idracadm7-10.3.0.0-5081.el8.x86_64.rpm \
+ && curl -O https://linux.dell.com/repo/hardware/latest/os_dependent/RHEL8_64/srvadmin/srvadmin-hapi-10.3.0.0-5081.el8.x86_64.rpm \
+ && yum -y -q install srvadmin-hapi-10.3.0.0-5081.el8.x86_64.rpm srvadmin-idracadm7-10.3.0.0-5081.el8.x86_64.rpm \
+ && yum -y -q install openssl-devel \
+ && rm srvadmin-hapi-10.3.0.0-5081.el8.x86_64.rpm srvadmin-idracadm7-10.3.0.0-5081.el8.x86_64.rpm \
+ && yum -y -q clean all
+
 ENTRYPOINT ["/opt/dell/srvadmin/bin/idracadm7"]
